@@ -758,10 +758,14 @@ dbFetch(res)</code></pre>
 <pre class="r"><code>dbClearResult(res)
 
 # We can see that returns the result of Camry!
+# B.1.1 Let&#39;s try doing this with dbGetQuery()
+dbGetQuery(db, &quot;SELECT car_make FROM car_brands WHERE mph = 210&quot;)</code></pre>
+<pre><code>##   car_make
+## 1   Boomer</code></pre>
+<pre class="r"><code># This is better than dbSendQuery because it performs: dbSendQuery(), dbFetch(), and dbClearResult() all at once! However, dbSendQuery is good for beginning to look at more complex querying that involves large amounts of data!  
 
 # B.2 Let&#39;s group some variables!
-res = dbSendQuery(db, &quot;SELECT country FROM car_companies GROUP BY country&quot;)
-dbFetch(res)</code></pre>
+dbGetQuery(db, &quot;SELECT country FROM car_companies GROUP BY country&quot;)</code></pre>
 <pre><code>##    country
 ## 1       AU
 ## 2       BE
@@ -778,11 +782,8 @@ dbFetch(res)</code></pre>
 ## 13      TH
 ## 14      UK
 ## 15      US</code></pre>
-<pre class="r"><code>dbClearResult(res)
-
-# B.3 Let&#39;s group a variable and order it to be in descending order! 
-res = dbSendQuery(db, &quot;SELECT mph FROM car_brands GROUP BY mph ORDER BY mph DESC&quot;)
-dbFetch(res)</code></pre>
+<pre class="r"><code># B.3 Let&#39;s group a variable and order it to be in descending order! 
+dbGetQuery(db, &quot;SELECT mph FROM car_brands GROUP BY mph ORDER BY mph DESC&quot;)</code></pre>
 <pre><code>##    mph
 ## 1  210
 ## 2  130
@@ -799,11 +800,8 @@ dbFetch(res)</code></pre>
 ## 13  25
 ## 14  20
 ## 15  10</code></pre>
-<pre class="r"><code>dbClearResult(res)
-
-# B.4 What if we added in a JOINS function? Let&#39;s do Left Join and only show the car_brand
-res = dbSendQuery(db, &quot;SELECT car_brand FROM car_brands LEFT JOIN car_companies ON car_brands.country = car_companies.country&quot;)
-dbFetch(res)</code></pre>
+<pre class="r"><code># B.4 What if we added in a JOINS function? Let&#39;s do Left Join and only show the car_brand
+dbGetQuery(db, &quot;SELECT car_brand FROM car_brands LEFT JOIN car_companies ON car_brands.country = car_companies.country&quot;)</code></pre>
 <pre><code>##     car_brand
 ## 1      Toyota
 ## 2       Mazda
@@ -820,18 +818,14 @@ dbFetch(res)</code></pre>
 ## 13    Porsche
 ## 14     Nissan
 ## 15       Ford</code></pre>
-<pre class="r"><code>dbClearResult(res)
-
-# B.5 Let&#39;s limit certain results to only 5 values 
-res = dbSendQuery(db, &quot;SELECT serial_numbers FROM car_parts LIMIT 5&quot;)
-dbFetch(res)</code></pre>
+<pre class="r"><code># B.5 Let&#39;s limit certain results to only 5 values 
+dbGetQuery(db, &quot;SELECT serial_numbers FROM car_parts LIMIT 5&quot;)</code></pre>
 <pre><code>##   serial_numbers
 ## 1        SX98099
 ## 2        YZ89979
 ## 3        UX67589
 ## 4        OK99879
 ## 5        PL09345</code></pre>
-<pre class="r"><code>dbClearResult(res)</code></pre>
 <pre class="r"><code># C. To disconnect from the database, as this is a temp database, you simply write this one line
 dbDisconnect(db)</code></pre>
 

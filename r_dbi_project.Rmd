@@ -344,26 +344,22 @@ dbFetch(res)
 dbClearResult(res)
 
 # We can see that returns the result of Camry!
+# B.1.1 Let's try doing this with dbGetQuery()
+dbGetQuery(db, "SELECT car_make FROM car_brands WHERE mph = 210")
+
+# This is better than dbSendQuery because it performs: dbSendQuery(), dbFetch(), and dbClearResult() all at once! However, dbSendQuery is good for beginning to look at more complex querying that involves large amounts of data!  
 
 # B.2 Let's group some variables!
-res = dbSendQuery(db, "SELECT country FROM car_companies GROUP BY country")
-dbFetch(res)
-dbClearResult(res)
+dbGetQuery(db, "SELECT country FROM car_companies GROUP BY country")
 
 # B.3 Let's group a variable and order it to be in descending order! 
-res = dbSendQuery(db, "SELECT mph FROM car_brands GROUP BY mph ORDER BY mph DESC")
-dbFetch(res)
-dbClearResult(res)
+dbGetQuery(db, "SELECT mph FROM car_brands GROUP BY mph ORDER BY mph DESC")
 
 # B.4 What if we added in a JOINS function? Let's do Left Join and only show the car_brand
-res = dbSendQuery(db, "SELECT car_brand FROM car_brands LEFT JOIN car_companies ON car_brands.country = car_companies.country")
-dbFetch(res)
-dbClearResult(res)
+dbGetQuery(db, "SELECT car_brand FROM car_brands LEFT JOIN car_companies ON car_brands.country = car_companies.country")
 
 # B.5 Let's limit certain results to only 5 values 
-res = dbSendQuery(db, "SELECT serial_numbers FROM car_parts LIMIT 5")
-dbFetch(res)
-dbClearResult(res)
+dbGetQuery(db, "SELECT serial_numbers FROM car_parts LIMIT 5")
 ```
 
 ```{r}
