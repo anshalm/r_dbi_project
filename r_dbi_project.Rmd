@@ -1,0 +1,373 @@
+---
+title: "r_dbi_project"
+author: "Anshal Majmudar"
+date: "2026-07-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Hi! This is a project focusing on the DBI project and running SQL commands on a database. We will be using the DBI package and RSQLite! 
+librarian::shelf(DBI, RSQLite, dplyr)
+
+# A. We will use DBI to connect to a remote database! Since we're using SQLite Database Management system to store the database in, we'll connect to it via this line - we can do the same thing for other systems but replace it with Rdb::db!
+db = dbConnect(RSQLite::SQLite(), dbname = ":memory:")
+
+# We have three cars datasets, we can make tables out of them! 
+car_brand = c("Toyota", 
+              "Mazda", 
+              "Lexus", 
+              "Mercedes", 
+              "BMW", 
+              "Volkswagen", 
+              "Tesla", 
+              "Polestar",
+              "Lucid", 
+              "Mitsibushi",
+              "Acura",
+              "Honda",
+              "Porsche",
+              "Nissan",
+              "Ford")
+mph = as.integer(c("45",
+        "60",
+        "35",
+        "70",
+        "40",
+        "55",
+        "90",
+        "25",
+        "10",
+        "20",
+        "95",
+        "100",
+        "125",
+        "130",
+        "210"))
+country = c("JA",
+            "SK",
+            "SI",
+            "GE",
+            "UK",
+            "TH",
+            "IN",
+            "AU",
+            "BE",
+            "PA",
+            "MX",
+            "PR",
+            "US",
+            "HU",
+            "NZ")
+serial_numbers = c("SX98099",
+                   "YZ89979",
+                   "UX67589",
+                   "OK99879",
+                   "PL09345",
+                   "ZZ04596",
+                   "YZ88779",
+                   "OX68769",
+                   "FK94579",
+                   "LL09985",
+                   "CX87655",
+                   "CF12356",
+                   "OS84526",
+                   "MO48571",
+                   "PW01237")
+car_make = c("Camry",
+             "MPV",
+             "LX 360",
+             "Wagon",
+             "Bonfire",
+             "Auto-Wagon",
+             "Model Y",
+             "3",
+             "L45",
+             "M95",
+             "RX 350",
+             "Pilot",
+             "Cayenne",
+             "Dimas",
+             "Boomer")
+year_produced = as.integer(c("2011", 
+                   "2011", 
+                   "2011",
+                   "2011",
+                   "2011", 
+                   "2011", 
+                   "2011", 
+                   "2011",
+                   "2011",
+                   "2011", 
+                   "2011", 
+                   "2011", 
+                   "2011",
+                   "2011",
+                   "2011")) 
+color = c("Yellow",
+          "Blue",
+          "Orange",
+          "Rose",
+          "Teal",
+          "Green",
+          "Black",
+          "Violet",
+          "Maroon",
+          "White",
+          "Navy",
+          "Indigo",
+          "Red",
+          "Burgundy",
+          "Cobalt")
+
+# We'll make our first dataset based on the car brand, car make, mph, what country it is from, year it was produced, serial numbers, and color
+car_brands = tibble(car_brand, car_make, mph, country, year_produced, serial_numbers, color)
+car_brands
+```
+
+```{r}
+# We'll make our second dataset based on the cars' companies (we're making up the fact they're owned by a parent company), ceos, country of origin, awards, mergers
+companies = c("Vierdan",
+              "Bonswar",
+              "Undries",
+              "French Federalis",
+              "Gunties",
+              "Weder",
+              "Kilmind",
+              "Derivied",
+              "Infiries",
+              "Treedom",
+              "Serifieas",
+              "Molusks",
+              "Werdies",
+              "Oxfordius",
+              "Sundries")
+ceos = c("Sophie Stewart",
+         "Jo Palmer",
+         "Jakob Miller",
+         "Hennie Elliot",
+         "Justeen Gonzales",
+         "Fernando Palmer",
+         "Bertha Butler",
+         "Martin Chapman",
+         "Esteban Wallace",
+         "Fernanda Murray",
+         "Bob Martin",
+         "Sebastia Marshall",
+         "Maximus Kelly",
+         "Alvin Shaw",
+         "Nigella Armstrong")
+country = c("JA",
+            "SK",
+            "SI",
+            "GE",
+            "UK",
+            "TH",
+            "IN",
+            "AU",
+            "BE",
+            "PA",
+            "MX",
+            "PR",
+            "US",
+            "HU",
+            "NZ")
+awards = c("Award of Car",
+           "Car of the Century",
+           "Future Car Innovator Award",
+           "Future Car Award",
+           "Innovator of the Year",
+           "Company of the Year",
+           "Highest Honors",
+           "Highest Achievement",
+           "Achievement in Car Physics",
+           "Fastest Car",
+           "Best Car for Young Adults",
+           "Flying Car Concept Winner",
+           "Flying Car Innovator",
+           "Hydraulic Based Car Winner",
+           "Underwater Best Car")
+mergers = c("Merger with: Underwater Labs",
+            "Merger with: TheScience Labs",
+            "Merger with: Future Labs",
+            "Merger with: FireScience Labs",
+            "Merger with: Earth Labs",
+            "Merger with: Car Labs",
+            "Merger with: CarPhysics Labs",
+            "Merger with: Phys Labs",
+            "Merger with: Yurn Labs",
+            "Merger with: GreenSea Labs",
+            "Merger with: Ice Labs",
+            "Merger with: Tre Labs",
+            "Merger with: MileMPH Labs",
+            "Merger with: Mach1 Labs",
+            "Merger with: Eve Labs")
+car_companies = tibble(companies, ceos, country, awards, mergers)
+car_companies
+```
+
+
+```{r}
+# We will make our third dataset based on car parts. This will include the car part names, year they were produced, serial numbers, name of the facility producing them, description, wear or tear rating, parts denied list of 15
+part_names = c("Engine",
+               "Transmission",
+               "Oil Stick",
+               "Water Filter",
+               "Windshield Wiper",
+               "Side Mirror",
+               "Front Mirror",
+               "Battery",
+               "Exhaust Pipe",
+               "Sunroof",
+               "Trunk Door",
+               "Camera",
+               "Gear Stick",
+               "Screen",
+               "Tire")
+year_produced = as.integer(c("2003",
+                             "2007",
+                             "2008",
+                             "2009",
+                             "2001",
+                             "2010",
+                             "2004",
+                             "2005",
+                             "2002",
+                             "2006",
+                             "2000",
+                             "1997",
+                             "2011",
+                             "1998",
+                             "1995"))
+facility_names = c("Car Parts 30", 
+                   "Big Car Parts",
+                   "Parts for Cars",
+                   "Tires & Cars Products",
+                   "Car Products",
+                   "International Car Parts",
+                   "Flex Car Parts",
+                   "Body Shop Car Parts",
+                   "Online Car Parts Fac.",
+                   "Supersize Car Parts",
+                   "Ultra Car Parts",
+                   "Alien Car Parts",
+                   "Carware Parts",
+                   "Super Car Parts",
+                   "Mini Car Parts")
+description = c("This is a description",
+                "This is a description",
+                "This is a description",
+                "This is a description",
+                "This is a description",
+                "This is a description",
+                "This is a description",
+                "This is a description",
+                "This is a description",
+                "This is a description",
+                "This is a description",
+                "This is a description",
+                "This is a description",
+                "This is a description",
+                "This is a description")
+wear_or_tear_rating = c("4/10",
+                        "1/10",
+                        "5/10",
+                        "6/10",
+                        "9/10",
+                        "10/10",
+                        "2/10",
+                        "3/10",
+                        "7/10",
+                        "1/10",
+                        "2/10",
+                        "4/10",
+                        "3/10",
+                        "8/10",
+                        "10/10")
+parts_denied = c("Front Door (due to Dent)",
+                 "Side Mirror (broken)",
+                 "Back Tailight (missing glass)",
+                 "Back Bumper (slightly scuffed)",
+                 "License Plate Frame (angled wrong)",
+                 "Engine Cover (missing)",
+                 "Fuel Tank (has hole inside)",
+                 "Battery (corroded - needs replacing)",
+                 "Front Axle (wrong amount of holes)",
+                 "Tires All (came badly punctured)",
+                 "Blinker (faint light)",
+                 "AC Wiring (done reversely)",
+                 "Glove Compartment (broke immediately)",
+                 "Cup Holder (backwards placement)",
+                 "Seats (stained)")
+serial_numbers = c("SX98099",
+                   "YZ89979",
+                   "UX67589",
+                   "OK99879",
+                   "PL09345",
+                   "ZZ04596",
+                   "YZ88779",
+                   "OX68769",
+                   "FK94579",
+                   "LL09985",
+                   "CX87655",
+                   "CF12356",
+                   "OS84526",
+                   "MO48571",
+                   "PW01237")
+car_parts = tibble(part_names, serial_numbers, year_produced, description, facility_names, wear_or_tear_rating, parts_denied)
+car_parts
+
+```
+
+```{r}
+# B. Great! Now that we have three datasets, let's make tables out of them! 
+dbWriteTable(db, "car_brands", car_brands)
+dbWriteTable(db, "car_companies", car_companies)
+dbWriteTable(db, "car_parts", car_parts)
+
+# Let's check if it was successfully done! 
+dbListTables(db) # Yes! It worked!
+
+# Now we can begin querying on these tables! We can do a simple query to select everything from car_brands!
+res = dbSendQuery(db, "SELECT * FROM car_brands")
+dbFetch(res) # Yes! It worked and we can see all the columns and values in them from car_brands table!
+dbClearResult(res)
+```
+
+```{r}
+# B.1 Let's do some more complex querying! We'll do some querying on WHERE statements! 
+res = dbSendQuery(db, "SELECT car_make FROM car_brands WHERE mph = 45")
+dbFetch(res)
+dbClearResult(res)
+
+# We can see that returns the result of Camry!
+
+# B.2 Let's group some variables!
+res = dbSendQuery(db, "SELECT country FROM car_companies GROUP BY country")
+dbFetch(res)
+dbClearResult(res)
+
+# B.3 Let's group a variable and order it to be in descending order! 
+res = dbSendQuery(db, "SELECT mph FROM car_brands GROUP BY mph ORDER BY mph DESC")
+dbFetch(res)
+dbClearResult(res)
+
+# B.4 What if we added in a JOINS function? Let's do Left Join and only show the car_brand
+res = dbSendQuery(db, "SELECT car_brand FROM car_brands LEFT JOIN car_companies ON car_brands.country = car_companies.country")
+dbFetch(res)
+dbClearResult(res)
+
+# B.5 Let's limit certain results to only 5 values 
+res = dbSendQuery(db, "SELECT serial_numbers FROM car_parts LIMIT 5")
+dbFetch(res)
+dbClearResult(res)
+```
+
+```{r}
+# C. To disconnect from the database, as this is a temp database, you simply write this one line
+dbDisconnect(db)
+```
+
